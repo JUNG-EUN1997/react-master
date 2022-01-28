@@ -6,5 +6,6 @@ declare module 'styled-components' {
     //해당 영역에 DefalutTheme에서 사용하는 값들을 모두 선언하기 때문에, 해당 내용을 사용하는 것 들에서 일부 내용이 빠지면 알 수 있음
     textColor: string;
     bgColor: string;
+    accentColor: string;
   }
 }
