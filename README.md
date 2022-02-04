@@ -27,6 +27,24 @@ npm i --save-dev @types/styled-components
 npm i react-router-dom@5.3.0
 ```
 
+### React-Query 
+> API를 통해 서버와 작업을 진행할 때 보다 편리하게 사용할 수 있도록 도와줌
+>> loading 상태 및 전송 결과를 받을 수 있음
+```
+npm i react-query
+```
+
+### apexcharts - CHART API [이동](https://apexcharts.com, "docs")
+```
+npm install --save react-apexcharts apexcharts
+```
+
+### react-helmet
+> 간단한 변경으로 단순노출용이라면 사용해도 되지만, 크롤링이나 소셜서비스용으로 제작 시, 서버사이드 렌더링 필요 [출처](https://jeonghwan-kim.github.io/dev/2020/08/15/react-helmet.html)
+```
+npm install --save react-helmet
+```
+
 
 [시청강의 : 노마드코더
 (React JS 마스터클래스)](https://nomadcoders.co, "강의페이지로 이동")

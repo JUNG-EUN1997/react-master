@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -47,7 +49,7 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
-interface CoinInterface {
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -58,7 +60,15 @@ interface CoinInterface {
 }
 
 function Coins() {
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
+  // 방법 2 : react-query 사용
+  const {isLoading, data } = useQuery<ICoin[]>("allCoins",fetchCoins)
+  /*
+  - [fetchCoins]에서 호출한 fecther함수의 상태를 [isLoading]이 저장하며, 호출 한 다음의 정보를 [data]에 저장 
+  - react-query가 data를 캐시로 저장하여, 이제는 다른 페이지 접속 후 다시 돌아와도 재로딩 X
+  */
+
+  /* 방법 1 : react-query 사용X
+  const [coins, setCoins] = useState<ICoin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     (async () => {
@@ -67,17 +77,17 @@ function Coins() {
       setCoins(json.slice(0, 100));
       setLoading(false);
     })();
-  }, []);
+  }, []); */
   return (
     <Container>
       <Header>
         <Title>Coins</Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <CoinsList>
-          {coins.map((coin) => (
+          {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
               <Link
                 to={{

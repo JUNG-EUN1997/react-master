@@ -11,6 +11,9 @@ import styled from "styled-components";
 import { setSyntheticLeadingComments } from "typescript";
 import Price from "./Price";
 import Chart from "./Chart";
+import { useQuery } from "react-query";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { Helmet } from "react-helmet";
 
 // 방법 2 - coinId가 무엇인지 interface 선언
 interface RouteParams {
@@ -27,6 +30,12 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+const BackBtn = styled.span`
+border: 1px solid #fff;
+display: inline-block;
+padding: 8px;
+margin-top: 8px;
 `;
 
 const Title = styled.h1`
@@ -146,19 +155,32 @@ interface IPriceData {
   };
 }
 
-
 function Coin() {
   /* 방법 1 - coinId가 무엇인지 직접 선언
     const {coinId} = useParams<{coinId:string}>();
   */
   const { coinId } = useParams<RouteParams>();
-  const [loading, setLoading] = useState<boolean>(true);
   const { state } = useLocation<RouterState>(); //이렇게 사용해서 보다 빠른 app 느낌이 남
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-  console.log(chartMatch);
+
+  const { isLoading: infoLoading, data: info } = useQuery<IInfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+  );
+  const { isLoading: tickersLoading, data: priceInfo } = useQuery<IPriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000, //refetch 시간을 통해 실시간 처리할 수 있음
+    }
+  );
+
+  const loading = infoLoading || tickersLoading;
+
+  /* const [loading, setLoading] = useState<boolean>(true);
+  const [info, setInfo] = useState<IInfoData>();
+  const [priceInfo, setPriceInfo] = useState<IPriceData>();
 
   useEffect(() => {
     (async () => {
@@ -172,10 +194,17 @@ function Coin() {
       setPriceInfo(priceData);
       setLoading(false);
     })();
-  }, []);
+  }, []); */
 
   return (
     <Container>
+      <Helmet>
+        {/* head tag로 다이렉트로 가는 방법 (react-helmet) */}
+        <title>{info?.name}</title>
+      </Helmet>
+      <Link to={`/`}>
+        <BackBtn>목록으로</BackBtn>
+      </Link>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : info?.name}
@@ -196,8 +225,8 @@ function Coin() {
               <span>${info?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>${priceInfo?.quotes.USD.price}</span>
             </OverviewItem>
           </Overview>
           <Description>{info?.description}</Description>
@@ -223,11 +252,10 @@ function Coin() {
           <Switch>
             <Route path={`/:coinId/price`}>
               <Price />
-              gg
             </Route>
-            <Route path={`/${coinId}/chart`}>
-              <Chart />
-              bb
+            {/* <Route path={`/${coinId}/chart`}> 아래 코드를 이렇게 작성 시, chart로 들어갔을 때 param값이 호출되지 않음*/}
+            <Route path={`/:coinId/chart`}>
+              <Chart coinId={coinId} />
             </Route>
           </Switch>
         </>
