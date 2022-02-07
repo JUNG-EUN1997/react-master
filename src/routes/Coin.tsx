@@ -232,7 +232,7 @@ function Coin() {
           <Description>{info?.description}</Description>
           <Overview>
             <OverviewItem>
-              <span>Total Suply:</span>
+              <span>Total Supply:</span>
               <span>{priceInfo?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
