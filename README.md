@@ -45,6 +45,10 @@ npm install --save react-apexcharts apexcharts
 npm install --save react-helmet
 ```
 
+### Recoil
+```
+npm install recoil
+```
 
 [시청강의 : 노마드코더
 (React JS 마스터클래스)](https://nomadcoders.co, "강의페이지로 이동")

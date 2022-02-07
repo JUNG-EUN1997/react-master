@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -18,7 +20,7 @@ const Header = styled.header`
 const CoinsList = styled.ul``;
 const Coin = styled.li`
   background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  color: #353b48;
   border-radius: 15px;
   margin-bottom: 10px;
   a {
@@ -78,10 +80,14 @@ function Coins() {
       setLoading(false);
     })();
   }, []); */
+
+  const setDarkAtom = useSetRecoilState(isDarkAtom) //recoil의 atom값을 수정하는 fn
+  const toggleDarkAtom = () => setDarkAtom(prev => !prev);
   return (
     <Container>
       <Header>
         <Title>Coins</Title>
+        <button onClick={toggleDarkAtom}>Toggle Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>
