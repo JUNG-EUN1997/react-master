@@ -13,7 +13,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
-import { Helmet } from "react-helmet";
+import { darken } from "polished";
 
 // 방법 2 - coinId가 무엇인지 interface 선언
 interface RouteParams {
@@ -26,16 +26,17 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 const Header = styled.header`
-  height: 10vh;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 `;
 const BackBtn = styled.span`
-border: 1px solid #fff;
-display: inline-block;
-padding: 8px;
-margin-top: 8px;
+  border: 1px solid #fff;
+  display: inline-block;
+  padding: 8px;
+  margin-top: 8px;
 `;
 
 const Title = styled.h1`
@@ -48,7 +49,7 @@ const Loader = styled.div`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => darken(0.1, props.theme.bgColor)};
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -79,13 +80,26 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => darken(0.1, props.theme.bgColor)};
   padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
   a {
     display: block;
+  }
+`;
+
+const TopNav = styled.div`
+  text-align: right;
+  width: 100%;
+  button {
+    background: ${(props) => props.theme.textColor};
+    color: ${(props) => props.theme.bgColor};
+    border: 0;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
   }
 `;
 
@@ -198,14 +212,12 @@ function Coin() {
 
   return (
     <Container>
-      <Helmet>
-        {/* head tag로 다이렉트로 가는 방법 (react-helmet) */}
-        <title>{info?.name}</title>
-      </Helmet>
-      <Link to={`/`}>
-        <BackBtn>목록으로</BackBtn>
-      </Link>
       <Header>
+        <TopNav>
+          <Link to={`/`}>
+            <button>목록으로</button>
+          </Link>
+        </TopNav>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : info?.name}
         </Title>
@@ -242,16 +254,16 @@ function Coin() {
           </Overview>
           <Tabs>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`}>Price</Link>
+              <Link to={`/${coinId}/price`}>Today Price</Link>
             </Tab>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>chart</Link>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
             </Tab>
           </Tabs>
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             {/* <Route path={`/${coinId}/chart`}> 아래 코드를 이렇게 작성 시, chart로 들어갔을 때 param값이 호출되지 않음*/}
             <Route path={`/:coinId/chart`}>

@@ -27,18 +27,28 @@ function Chart({ coinId }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
     fetchCoinHistory(coinId)
   );
-
+  console.log(data)
   return (
     <>
       {isLoading ? (
         "Loading chart..."
       ) : (
         <ApexChart
-          type="line"
+          type="candlestick"
           series={[
             {
-              name: "Price",
-              data: data?.map((price) => price.close),
+              data: data?.map((price) => {
+                const obj = {
+                  x: new Date(price.time_open),
+                  y: [
+                    price.open.toFixed(2),
+                    price.high.toFixed(2),
+                    price.low.toFixed(2),
+                    price.close.toFixed(2),
+                  ],
+                };
+                return obj;
+              }),
             },
           ]}
           options={{
@@ -52,36 +62,16 @@ function Chart({ coinId }: ChartProps) {
                 show: false,
               },
               background: "translate",
+              foreColor: isDark ? "#ffffff" : "#373d3f",
             },
-            grid: {
-              show: false,
+            xaxis: {
+              type: "datetime",
             },
             stroke: {
               curve: "smooth",
-              width: 5,
-            },
-            yaxis: {
-              show: false,
-            },
-            xaxis: {
-              axisTicks: { show: false },
-              axisBorder: { show: false },
-              labels: { show: false },
-              type: "datetime",
-              categories: data?.map((date) => date.time_close),
-            },
-            fill: {
-              type: "gradient",
-              gradient: {
-                gradientToColors: ["#0be881"],
-                stops: [0, 100],
-              },
             },
             colors: ["#0fbcf9"],
             tooltip: {
-              y: {
-                formatter: (value) => `$${value.toFixed(3)}`,
-              },
               theme: isDark ? "dark" : "light",
             },
           }}

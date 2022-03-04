@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { isDarkAtom } from "../atoms";
@@ -13,9 +13,11 @@ const Container = styled.div`
 `;
 const Header = styled.header`
   height: 10vh;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 `;
 const CoinsList = styled.ul``;
 const Coin = styled.li`
@@ -51,6 +53,19 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
+const TopNav = styled.div`
+  text-align: right;
+  width: 100%;
+  button {
+    background: ${(props) => props.theme.textColor};
+    color: ${(props) => props.theme.bgColor};
+    border: 0;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+  }
+`;
+
 interface ICoin {
   id: string;
   name: string;
@@ -63,7 +78,7 @@ interface ICoin {
 
 function Coins() {
   // 방법 2 : react-query 사용
-  const {isLoading, data } = useQuery<ICoin[]>("allCoins",fetchCoins)
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
   /*
   - [fetchCoins]에서 호출한 fecther함수의 상태를 [isLoading]이 저장하며, 호출 한 다음의 정보를 [data]에 저장 
   - react-query가 data를 캐시로 저장하여, 이제는 다른 페이지 접속 후 다시 돌아와도 재로딩 X
@@ -81,13 +96,18 @@ function Coins() {
     })();
   }, []); */
 
-  const setDarkAtom = useSetRecoilState(isDarkAtom) //recoil의 atom값을 수정하는 fn
-  const toggleDarkAtom = () => setDarkAtom(prev => !prev);
+  const setDarkAtom = useSetRecoilState(isDarkAtom); //recoil의 atom값을 수정하는 fn
+  const isDark = useRecoilValue(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
+  console.log(isDark);
+
   return (
     <Container>
       <Header>
+        <TopNav>
+          <button onClick={toggleDarkAtom}>{isDark ? "White Mode" : "Dark Mode"}</button>
+        </TopNav>
         <Title>Coins</Title>
-        <button onClick={toggleDarkAtom}>Toggle Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>

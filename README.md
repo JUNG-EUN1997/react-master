@@ -50,6 +50,13 @@ npm install --save react-helmet
 npm install recoil
 ```
 
+### polished
+> styled components에서 scss 문법 사용을 위한 설치
+```
+npm install --save polished
+```
+
+
 [시청강의 : 노마드코더
 (React JS 마스터클래스)](https://nomadcoders.co, "강의페이지로 이동")
 
