@@ -14,6 +14,9 @@ import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { darken } from "polished";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
+import { Helmet } from "react-helmet";
 
 // 방법 2 - coinId가 무엇인지 interface 선언
 interface RouteParams {
@@ -192,6 +195,11 @@ function Coin() {
 
   const loading = infoLoading || tickersLoading;
 
+  // const setDarkAtom = useSetRecoilState(isDarkAtom); //recoil의 atom값을 수정하는 fn
+  // const isDark = useRecoilValue(isDarkAtom);
+  const [isDark, setDarkAtom] = useRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
+
   /* const [loading, setLoading] = useState<boolean>(true);
   const [info, setInfo] = useState<IInfoData>();
   const [priceInfo, setPriceInfo] = useState<IPriceData>();
@@ -212,7 +220,17 @@ function Coin() {
 
   return (
     <Container>
+      <Helmet>
+        {/* head tag로 다이렉트로 가는 방법 (react-helmet) */}
+        <title>{info?.name}</title>
+      </Helmet>
       <Header>
+        <TopNav>
+          <button onClick={toggleDarkAtom}>
+            {isDark ? "White Mode" : "Dark Mode"}
+          </button>
+          <br />
+        </TopNav>
         <TopNav>
           <Link to={`/`}>
             <button>목록으로</button>

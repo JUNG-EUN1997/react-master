@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { isDarkAtom } from "../atoms";
@@ -96,13 +97,18 @@ function Coins() {
     })();
   }, []); */
 
-  const setDarkAtom = useSetRecoilState(isDarkAtom); //recoil의 atom값을 수정하는 fn
-  const isDark = useRecoilValue(isDarkAtom);
+  // const setDarkAtom = useSetRecoilState(isDarkAtom); //recoil의 atom값을 수정하는 fn
+  // const isDark = useRecoilValue(isDarkAtom);
+  const [isDark, setDarkAtom] = useRecoilState(isDarkAtom);
   const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
   console.log(isDark);
 
   return (
     <Container>
+      <Helmet>
+        {/* head tag로 다이렉트로 가는 방법 (react-helmet) */}
+        <title>Coins</title>
+      </Helmet>
       <Header>
         <TopNav>
           <button onClick={toggleDarkAtom}>{isDark ? "White Mode" : "Dark Mode"}</button>
